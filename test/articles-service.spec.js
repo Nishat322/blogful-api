@@ -75,6 +75,31 @@ describe('Articles service object', function(){
                     });
                 });
         });
+
+        it('deleteArticle() removes an article by id from \'blogful_articles\' table', () => {
+            const articleId = 2;
+
+            return ArticlesService.deleteArticle(db, articleId)
+                .then(() => ArticlesService.getAllArticles(db))
+                .then(allArticles => {
+                    [
+                        {
+                            id: 1,
+                            title: 'First test post!',
+                            content: 'Lorem ipsum dolor sit amet, consectetur adipisicing elit. Natus consequuntur deserunt commodi, nobis qui inventore corrupti iusto aliquid debitis unde non.Adipisci, pariatur.Molestiae, libero esse hic adipisci autem neque ?',
+                            date_published: new Date('2029-01-22T16:28:32.615Z')
+                        },
+                        {
+                            id: 3,
+                            title: 'Third test post!',
+                            content: 'Lorem ipsum dolor sit amet, consectetur adipisicing elit. Possimus, voluptate? Necessitatibus, reiciendis? Cupiditate totam laborum esse animi ratione ipsa dignissimos laboriosam eos similique cumque. Est nostrum esse porro id quaerat.',
+                            date_published: new Date('1919-12-22T16:28:32.615Z')
+                        }
+                    ];
+                const expected = testArticles.filter(article => article.id !== articleId);
+                expect(allArticles).to.eql(expected);
+            });
+        });
     });
 
     context('Given \'blogful_articles\' has no data', () => {
