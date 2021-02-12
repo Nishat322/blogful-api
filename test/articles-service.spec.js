@@ -43,7 +43,7 @@ describe('Articles service object', function(){
     after(() => db.destroy());
 
     context('Given \'blogful_articles\' has data', () => {
-        before(() => {
+        beforeEach(() => {
             return db   
                 .into('blogful_articles')
                 .insert(testArticles);
@@ -58,6 +58,21 @@ describe('Articles service object', function(){
                         content: article.content,
                         date_published: new Date(article.date_published)
                     })));
+                });
+        });
+
+        it('getById() resolves an article by id from \'blogful_articles\' table', () => {
+            const secondId = 2;
+            const secondTestArticle = testArticles[secondId - 1];
+
+            return ArticlesService.getById(db, secondId)
+                .then(actual => {
+                    expect(actual).to.eql({
+                        id: secondId,
+                        title: secondTestArticle.title,
+                        content: secondTestArticle.content,
+                        date_published: secondTestArticle.date_published
+                    });
                 });
         });
     });

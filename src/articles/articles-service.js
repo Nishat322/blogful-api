@@ -13,6 +13,14 @@ const ArticlesService = {
             .then(rows => {
                 return rows[0];
             });
+    },
+
+    getById(knex, articleId){
+        return knex 
+            .from('blogful_articles')
+            .select('*')
+            .where('id', articleId)
+            .first();
     }
 };
 
