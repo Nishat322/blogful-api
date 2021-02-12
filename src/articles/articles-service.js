@@ -1,8 +1,8 @@
 /* eslint-disable indent */
 'use strict';
 const ArticlesService = {
-    getAllArticles(){
-        return 'all articles!';
+    getAllArticles(knex){
+        return knex.select('*').from('blogful_articles');
     }
 };
 
