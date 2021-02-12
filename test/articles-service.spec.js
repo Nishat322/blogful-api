@@ -100,6 +100,26 @@ describe('Articles service object', function(){
                 expect(allArticles).to.eql(expected);
             });
         });
+
+        it('updateArticle() updates an article by id from \'blogful_articles\' table', () => {
+            const idOfArticleToUpdate = 1;
+            const newArticleData = {
+                title: 'updated title',
+                content: 'updated content',
+                date_published: new Date(),
+            };
+
+            return ArticlesService.updateArticle(db, idOfArticleToUpdate, newArticleData)
+                .then(() => ArticlesService.getById(db, idOfArticleToUpdate))
+                .then(article => {
+                    expect(article).to.eql({
+                        id: idOfArticleToUpdate,
+                        title: newArticleData.title,
+                        content: newArticleData.content,
+                        date_published: newArticleData.date_published,
+                    });
+                });
+        });
     });
 
     context('Given \'blogful_articles\' has no data', () => {
