@@ -5,11 +5,11 @@ require('dotenv').config();
 const { expect } = require('chai');
 const knex = require('knex');
 const ArticlesService = require('../src/articles/articles-service');
-const makeArticlesArray = require('./articles.fixtures');
+const {makeArticlesArray1} = require('./articles.fixtures');
 
 describe('Articles service object', function(){
     let db;
-    let testArticles = makeArticlesArray();
+    let testArticles = makeArticlesArray1();
 
     before(() => {
         db = knex({
