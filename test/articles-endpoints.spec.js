@@ -3,8 +3,8 @@
 
 const {expect} = require('chai');
 const knex = require('knex');
-const supertest = require('supertest');
 const app = require('../src/app');
+const supertest = require('supertest');
 const {makeArticlesArray2} = require('./articles.fixtures');
 
 describe.only('Articles Endpoints', function(){
@@ -15,6 +15,7 @@ describe.only('Articles Endpoints', function(){
             'client': 'pg',
             'connection': process.env.TEST_DB_URL,
         });
+        app.set('db', db);
     });
 
     after('disconnect from db', () => db.destroy());
@@ -23,14 +24,11 @@ describe.only('Articles Endpoints', function(){
 
     context('Given there are articles in the database', () => {
         const testArticles = makeArticlesArray2();
-
         beforeEach('insert articles', () => {
             return db   
                 .into('blogful_articles')
                 .insert(testArticles);
         });
-
-        app.set('db', db);
 
         it('GET /articles responds with 200 and all the articles', () => {
             return supertest(app)
