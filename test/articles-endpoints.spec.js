@@ -5,7 +5,7 @@ const {expect} = require('chai');
 const knex = require('knex');
 const app = require('../src/app');
 const supertest = require('supertest');
-const {makeArticlesArray2} = require('./articles.fixtures');
+const {makeArticlesArray2, makeMaliciousArray} = require('./articles.fixtures');
 
 describe('Articles Endpoints', function(){
     let db; 
@@ -50,7 +50,7 @@ describe('Articles Endpoints', function(){
         });
     });
     
-    describe.only('GET /articles/article_id', () => {
+    describe('GET /articles/article_id', () => {
         context('Given there are no articles in the database', () => {
             it('reponds with 404', () => {
                 const articleId = 123456;
@@ -80,12 +80,7 @@ describe('Articles Endpoints', function(){
         });
 
         context('Given an XSS attack article', () => {
-            const maliciousArticle = {
-                id: 911,
-                title: 'Naughty naughty very naughty <script>alert("xss");</script>',
-                style: 'How-to',
-                content: 'Bad image <img src="https://url.to.file.which/does-not.exist" onerror="alert(document.cookie);">. But not <strong>all</strong> bad.'
-            };
+            const maliciousArticle = makeMaliciousArray();
             
             beforeEach('insert malicious article', () => {
                 return db
@@ -152,6 +147,42 @@ describe('Articles Endpoints', function(){
                     .send(newArticle)
                     .expect(400, {error: {message: `Missing '${field}' in the request body`}
                 });
+            });
+        });
+    });
+
+    describe('DELETE /articles/:article_id', () => {
+        context('Given there are articles in the database', () => {
+            const testArticles = makeArticlesArray2();
+
+            beforeEach('insert articles', () => {
+                return db   
+                    .into('blogful_articles')
+                    .insert(testArticles);
+            });
+
+            it('responds with 204 and removes the article', () => {
+                const idToRemove = 2;
+                const expectedArticles = testArticles.filter(article => article.id !== idToRemove);
+
+                return supertest(app)
+                    .delete(`/articles/${idToRemove}`)
+                    .expect(204)
+                    .then(res => 
+                        supertest(app)
+                            .get('/articles')
+                            .expect(expectedArticles)
+                    );
+            });
+        });
+
+        context('Given no articles', () => {
+            it('responds with 404', () => {
+                const articleId = 123456;
+
+                return supertest(app)
+                    .delete(`/articles/${articleId}`)
+                    .expect(404, {error: {message: 'Article doesn\'t exist'}});
             });
         });
     });
