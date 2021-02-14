@@ -80,9 +80,10 @@ describe('Articles Endpoints', function(){
         });
     }); 
     
-    describe('POST /articles', () => {
+    describe.only('POST /articles', () => {
         it('creates an article, responding with 201 and the new article', () => {
             this.retries(3);
+
             const newArticle = {
                 title: 'Test new Article',
                 style: 'Listicle',
@@ -108,6 +109,25 @@ describe('Articles Endpoints', function(){
                         .get(`/articles/${postRes.body.id}`)
                         .expect(postRes.body)
                 );
+        });
+
+        const requiredFields = ['title', 'style', 'content'];
+        requiredFields.forEach(field => {
+            const newArticle = {
+                title: 'Test new Article',
+                style: 'Listicle',
+                content: 'Test new content'
+            };
+            
+            it(`responds with 400 and an error message when the ${field} is missing`, () => {
+                delete newArticle[field];
+
+                return supertest(app)
+                    .post('/articles')
+                    .send(newArticle)
+                    .expect(400, {error: {message: `Missing '${field}' in the request body`}
+                });
+            });
         });
     });
 });

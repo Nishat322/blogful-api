@@ -1,3 +1,4 @@
+/* eslint-disable eqeqeq */
 /* eslint-disable indent */
 'use strict';
 
@@ -21,6 +22,15 @@ articlesRouter
         const {title, content, style} = req.body;
         const newArticle = {title, content, style};
         const knexInstance = req.app.get('db');
+
+        for (const [key,value] of Object.entries(newArticle)){
+            if(value == null){
+                return res 
+                        .status(400)
+                        .json({error: {message: `Missing '${key}' in the request body` }});
+
+            }
+        }
         ArticlesService.insertArticle(knexInstance,newArticle)
             .then(article => {
                 res
