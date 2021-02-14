@@ -9,6 +9,7 @@ const { NODE_ENV } = require('./config');
 const ArticlesService = require('./articles/articles-service');
 
 const app = express();
+const jsonParser = express.json();
 
 const morganOption = (NODE_ENV === 'production')
   ? 'tiny'
@@ -38,6 +39,20 @@ app.get('/articles/:article_id', (req,res,next) => {
                     .json({error: {message: 'Article doesn\'t exist'}});
             }
             res.json(article);
+        })
+        .catch(next);
+});
+
+app.post('/articles', jsonParser, (req,res,next) => {
+    const {title, content, style} = req.body;
+    const newArticle = {title, content, style};
+    const knexInstance = req.app.get('db');
+    ArticlesService.insertArticle(knexInstance,newArticle)
+        .then(article => {
+            res
+                .status(201)
+                .location(`/articles/${article.id}`)
+                .json(article);
         })
         .catch(next);
 });
