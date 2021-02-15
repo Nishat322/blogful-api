@@ -23,7 +23,7 @@ app.get('/', (req,res) => {
     res.status(200).send('Hello, world!');
   });
 
-app.use('/', articlesRouter);
+app.use('/api', articlesRouter);
 app.use(errorHandler);
     
 module.exports = app;
