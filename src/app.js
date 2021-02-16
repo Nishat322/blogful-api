@@ -7,6 +7,8 @@ const cors = require('cors');
 const helmet = require('helmet');
 const { NODE_ENV } = require('./config');
 const articlesRouter = require('./articles/articles-router');
+const usersRouter = require('./users/users-router');
+const commentsRouter = require('./comments/comments-router');
 const errorHandler = require('./errorHandler');
 
 const app = express();
@@ -24,6 +26,8 @@ app.get('/', (req,res) => {
   });
 
 app.use('/api', articlesRouter);
+app.use('/api', usersRouter);
+app.use('/api', commentsRouter);
 app.use(errorHandler);
     
 module.exports = app;
