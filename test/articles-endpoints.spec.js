@@ -8,7 +8,7 @@ const supertest = require('supertest');
 const {makeArticlesArray, makeMaliciousArray} = require('./articles.fixtures');
 const {makeUsersArray} = require('./users.fixtures');
 
-describe.skip('Articles Endpoints', function(){
+describe('Articles Endpoints', function(){
     let db; 
     
     before('make knex connection', () => {

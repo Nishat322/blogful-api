@@ -77,7 +77,10 @@ describe('Articles service object', function(){
                 .then(() => ArticlesService.getAllArticles(db))
                 .then(allArticles => {
                     const expected = testArticles.filter(article => article.id !== articleId);
-                    expect(allArticles).to.eql(expected);
+                    expect(allArticles).to.eql(expected.map(article => ({
+                        ...article,
+                        date_published: new Date(article.date_published)
+                    })));
             });
         });
 
@@ -116,6 +119,7 @@ describe('Articles service object', function(){
 
         it('insertArticle() inserts a new article and resolves the new article with an \'id\'', () => {
             const newArticle = {
+                author: null,
                 title: 'Test new title',
                 content: 'Test new content',
                 date_published: new Date('2020-01-01T00:00:00.000Z'),
@@ -128,7 +132,7 @@ describe('Articles service object', function(){
                         title: newArticle.title,
                         content: newArticle.content,
                         date_published: newArticle.date_published,
-                        author: newArticle.author,
+                        author: null,
                         style: newArticle.style,
                     });
                 });
